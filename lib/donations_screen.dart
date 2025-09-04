@@ -1,51 +1,52 @@
+// donations_screen.dart
 import 'package:flutter/material.dart';
-import 'listing_service.dart';
+import 'sample_data.dart';
 import 'listing_card.dart';
+import 'page_transition.dart';
+import 'chat_screen.dart'; // keep this because we use ChatScreen below
 
-class DonationsScreen extends StatefulWidget {
+class DonationsScreen extends StatelessWidget {
   const DonationsScreen({super.key});
 
   @override
-  _DonationsScreenState createState() => _DonationsScreenState();
-}
-
-class _DonationsScreenState extends State<DonationsScreen> {
-  final ListingService _service = ListingService.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    // Rebuild when the service notifies (listings added/removed/updated)
-    _service.addListener(_onServiceChanged);
-  }
-
-  @override
-  void dispose() {
-    _service.removeListener(_onServiceChanged);
-    super.dispose();
-  }
-
-  void _onServiceChanged() => setState(() {});
-
-  @override
   Widget build(BuildContext context) {
-    final donations = _service.filter(donationsOnly: true);
+    final donationListings =
+    sampleListings.where((l) => l.donation).toList();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Donations")),
-      body: ListView(
+    return SafeArea(
+      child: ListView(
         padding: const EdgeInsets.all(12),
-        children: donations.isEmpty
-            ? [
-          const SizedBox(height: 50),
-          const Center(
-            child: Text(
-              "No donation items available right now.",
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+        children: [
+          const Text(
+            "Donations",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          if (donationListings.isEmpty)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Text(
+                  "No donation items available right now.",
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              ),
+            )
+          else
+            ...donationListings.map(
+                  (listing) => ListingCard(
+                listing: listing,
+                onMessage: () {
+                  Navigator.push(
+                    context,
+                    FadeSlidePageRoute(
+                      page: ChatScreen(seller: listing.seller),
+                    ),
+                  );
+                },
+              ),
             ),
-          )
-        ]
-            : donations.map((listing) => ListingCard(listing: listing)).toList(),
+        ],
       ),
     );
   }

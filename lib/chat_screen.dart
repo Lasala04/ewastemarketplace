@@ -1,6 +1,7 @@
+// chat_screen.dart
 import 'package:flutter/material.dart';
-import 'chat.dart';
 import 'chat_service.dart';
+import 'chat.dart'; // adjust path to where your Message class is
 import 'message_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -8,85 +9,99 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.seller});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   late List<Message> _messages;
 
   @override
   void initState() {
     super.initState();
+    // load existing messages for this conversation
     _messages = ChatService.instance.messagesFor(widget.seller);
   }
 
-  void _sendMessage() {
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _send() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
-    final msg = Message(sender: 'Me', text: text, time: DateTime.now(), isMe: true);
+
+    final msg =
+    Message(sender: "Me", text: text, time: DateTime.now(), isMe: true);
+
     ChatService.instance.sendMessage(widget.seller, msg);
+
     setState(() {
       _messages = ChatService.instance.messagesFor(widget.seller);
     });
+
     _controller.clear();
-    // animate insert
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _listKey.currentState?.insertItem(_messages.length - 1, duration: const Duration(milliseconds: 350));
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Row(children: [CircleAvatar(backgroundColor: Colors.grey[800], child: Text(widget.seller.isNotEmpty ? widget.seller[0] : '?')), const SizedBox(width: 8), Text(widget.seller)])),
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            Hero(
+              tag: 'avatar-${widget.seller}',
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(
+                  "https://i.pravatar.cc/150?u=${widget.seller}",
+                ),
+                radius: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(widget.seller,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
-            child: AnimatedList(
-              key: _listKey,
-              initialItemCount: _messages.length,
-              reverse: false,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              itemBuilder: (context, index, animation) {
-                final message = _messages[index];
-                return SizeTransition(
-                  sizeFactor: animation,
-                  child: Align(
-                    alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
-                    child: MessageBubble(text: message.text, time: message.time, isMe: message.isMe),
-                  ),
-                );
+            child: ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: _messages.length,
+              itemBuilder: (context, i) {
+                final msg = _messages[i];
+                final isMe = msg.isMe == true || msg.sender == "Me";
+                return MessageBubble(
+                    text: msg.text, time: msg.time, isMe: isMe);
               },
             ),
           ),
           Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             color: Colors.grey[900],
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      hintStyle: TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: Colors.grey[850],
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                    decoration: const InputDecoration(
+                      hintText: "Type a message...",
+                      border: InputBorder.none,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                FloatingActionButton.small(
-                  onPressed: _sendMessage,
-                  backgroundColor: Colors.green,
-                  child: const Icon(Icons.send, color: Colors.black),
-                )
+                IconButton(
+                  icon: const Icon(Icons.send, color: Colors.green),
+                  onPressed: _send,
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

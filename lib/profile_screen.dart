@@ -1,9 +1,12 @@
+// profile_screen.dart
 import 'package:flutter/material.dart';
 import 'listing_service.dart';
 import 'listing_card.dart';
+import 'chat_screen.dart';
+import 'page_transition.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key}); // ✅ added key
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -28,7 +31,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myListings = _service.all.where((l) => l.seller == 'Me').toList();
+    final myListings =
+    _service.all.where((l) => l.seller == 'Me').toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text("Profile")),
@@ -36,18 +40,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(12),
         children: [
           Row(children: [
-            const CircleAvatar(
-              radius: 32,
-              backgroundImage: NetworkImage("https://i.pravatar.cc/150?img=12"),
+            const Hero(
+              tag: 'profile-avatar',
+              child: CircleAvatar(
+                radius: 32,
+                backgroundImage:
+                NetworkImage("https://i.pravatar.cc/150?img=12"),
+              ),
             ),
             const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text("John Doe",
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
-                Text("Eco Warrior", style: TextStyle(color: Colors.white54)),
+                    style:
+                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text("Eco Warrior",
+                    style: TextStyle(color: Colors.white54)),
               ],
             )
           ]),
@@ -66,7 +75,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               direction: DismissDirection.startToEnd,
               onDismissed: (_) => _service.delete(l.id),
-              child: ListingCard(listing: l),
+              child: ListingCard(
+                listing: l,
+                onMessage: () {
+                  Navigator.push(
+                    context,
+                    FadeSlidePageRoute(
+                      page: ChatScreen(seller: l.seller),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],

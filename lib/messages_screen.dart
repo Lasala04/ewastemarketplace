@@ -1,58 +1,62 @@
+// messages_screen.dart
 import 'package:flutter/material.dart';
-import 'chat.dart';
-import 'chat_service.dart';
 import 'chat_screen.dart';
+import 'page_transition.dart';
 
-class MessagesScreen extends StatefulWidget {
+class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
 
-  @override
-  _MessagesScreenState createState() => _MessagesScreenState();
-}
-
-class _MessagesScreenState extends State<MessagesScreen> {
-  // For demo, conversations are keyed by seller name
-  List<String> get _conversations => ChatService.instance.conversations;
-
-  @override
-  void initState() {
-    super.initState();
-    // seed a couple of demo messages if empty
-    if (_conversations.isEmpty) {
-      ChatService.instance.sendMessage('John', Message(sender: 'John', text: 'Is this still available?', time: DateTime.now().subtract(const Duration(minutes: 30))));
-      ChatService.instance.sendMessage('Jane', Message(sender: 'Jane', text: 'Thanks for the donation!', time: DateTime.now().subtract(const Duration(hours: 3))));
-    }
-  }
+  final List<Map<String, String>> dummyConversations = const [
+    {
+      "name": "John",
+      "avatar": "https://i.pravatar.cc/150?img=11",
+      "last": "Still available?",
+    },
+    {
+      "name": "Maria",
+      "avatar": "https://i.pravatar.cc/150?img=22",
+      "last": "Can I donate this?",
+    },
+    {
+      "name": "Alex",
+      "avatar": "https://i.pravatar.cc/150?img=33",
+      "last": "When can we meet?",
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final convos = ChatService.instance.conversations;
-    return SafeArea(
-      child: ListView.builder(
-        itemCount: convos.length,
-        itemBuilder: (context, index) {
-          final name = convos[index];
-          final msgs = ChatService.instance.messagesFor(name);
-          final last = msgs.isNotEmpty ? msgs.last : null;
+    return Scaffold(
+      appBar: AppBar(title: const Text("Messages")),
+      body: ListView.builder(
+        itemCount: dummyConversations.length,
+        itemBuilder: (context, i) {
+          final convo = dummyConversations[i];
           return ListTile(
-            leading: CircleAvatar(backgroundColor: Colors.grey[800], child: Text(name.isNotEmpty ? name[0] : '?')),
-            title: Text(name),
-            subtitle: Text(last?.text ?? 'Say hi'),
-            trailing: Text(last != null ? _ago(last!.time) : ''),
-            onTap: () async {
-              await Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(seller: name)));
-              setState(() {});
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Hero(
+              tag: 'avatar-${convo["name"]}',
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(convo["avatar"]!),
+                radius: 26,
+              ),
+            ),
+            title: Text(convo["name"]!,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(convo["last"]!,
+                style: const TextStyle(color: Colors.white70)),
+            onTap: () {
+              Navigator.push(
+                context,
+                FadeSlidePageRoute(
+                  page: ChatScreen(seller: convo["name"]!),
+                ),
+              );
             },
           );
         },
       ),
     );
-  }
-
-  String _ago(DateTime t) {
-    final diff = DateTime.now().difference(t);
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m';
-    if (diff.inHours < 24) return '${diff.inHours}h';
-    return '${diff.inDays}d';
   }
 }
