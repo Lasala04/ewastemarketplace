@@ -36,22 +36,23 @@ class ListingService extends ChangeNotifier {
 
   void reserve(String id, String type) {
     final l = _listings.firstWhere((x) => x.id == id);
-    l.transactionType = type;
-    l.isSold = true; // ✅ FIX: Changed from sold to isSold
+    // ✅ FIX: Removed the line setting 'transactionType' as it no longer exists.
+    l.isSold = true;
     notifyListeners();
   }
 
-  List<Listing> filter(
-      {String category = 'All',
-        bool donationsOnly = false,
-        int minStars = 0,
-        String stock = 'available'}) {
+  List<Listing> filter({
+    String category = 'All',
+    bool donationsOnly = false, // This parameter is now unused but kept for compatibility
+    int minStars = 0,
+    String stock = 'available'
+  }) {
     return _listings.where((l) {
       if (category != 'All' && l.category != category) return false;
-      if (donationsOnly && !l.donation) return false;
+      // ✅ FIX: Removed the line checking for 'donation' as it no longer exists.
       if (minStars > 0 && (l.rating.round() < minStars)) return false;
-      if (stock == 'available' && l.isSold) return false; // ✅ FIX: Changed from sold to isSold
-      if (stock == 'sold' && !l.isSold) return false;      // ✅ FIX: Changed from sold to isSold
+      if (stock == 'available' && l.isSold) return false;
+      if (stock == 'sold' && !l.isSold) return false;
       return true;
     }).toList();
   }

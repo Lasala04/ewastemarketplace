@@ -95,10 +95,8 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                 const SizedBox(height: 8),
                 Text(widget.listing.description, style: const TextStyle(color: Colors.white70, height: 1.5)),
                 const SizedBox(height: 20),
-                if (!widget.listing.donation)
-                  Text("₱${widget.listing.price?.toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold)),
+                Text("₱${widget.listing.price?.toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 30),
-                // 🚀 UPDATE: Transactional and Rating buttons
                 if (!_isSold)
                   ElevatedButton.icon(
                     onPressed: _markAsSold,

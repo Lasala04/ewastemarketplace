@@ -8,11 +8,9 @@ class AddListingScreen extends StatefulWidget {
 
 class _AddListingScreenState extends State<AddListingScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool _isDonation = false;
 
   void _submitListing() {
     if (_formKey.currentState!.validate()) {
-      // For UI concept, just pop the screen
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Listing created successfully!'), backgroundColor: Colors.green),
@@ -40,25 +38,16 @@ class _AddListingScreenState extends State<AddListingScreen> {
               validator: (v) => v!.isEmpty ? 'Please enter a description' : null,
             ),
             const SizedBox(height: 16),
-            if (!_isDonation)
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Price (₱)', prefixText: '₱ '),
-                keyboardType: TextInputType.number,
-                validator: (v) => v!.isEmpty ? 'Please enter a price' : null,
-              ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Price (₱)', prefixText: '₱ '),
+              keyboardType: TextInputType.number,
+              validator: (v) => v!.isEmpty ? 'Please enter a price' : null,
+            ),
             const SizedBox(height: 16),
-            // Mock Image Upload Button
             OutlinedButton.icon(
               icon: const Icon(Icons.camera_alt_outlined),
               label: const Text('Upload Images'),
-              onPressed: () {}, // Mock functionality
-            ),
-            const SizedBox(height: 16),
-            SwitchListTile(
-              title: const Text('Mark as Donation (Free)'),
-              value: _isDonation,
-              onChanged: (val) => setState(() => _isDonation = val),
-              activeColor: Colors.green,
+              onPressed: () {},
             ),
             const SizedBox(height: 24),
             ElevatedButton(

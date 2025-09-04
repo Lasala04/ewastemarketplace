@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
-import 'donations_screen.dart';
+import 'impact_screen.dart'; // 🚀 UPDATE: Replaced donations screen
 import 'messages_screen.dart';
 import 'profile_screen.dart';
 import 'add_listing_screen.dart';
@@ -18,7 +18,7 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const SearchScreen(),
-    const DonationsScreen(),
+    const ImpactScreen(), // 🚀 UPDATE: New Impact Screen
     const MessagesScreen(),
     const ProfileScreen(),
   ];
@@ -40,7 +40,7 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
             stops: const [0.0, 0.4],
           ),
         ),
-        child: IndexedStack( // Use IndexedStack to preserve state of each screen
+        child: IndexedStack(
           index: _selectedIndex,
           children: _screens,
         ),
@@ -60,13 +60,13 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
         child: SizedBox(
           height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              _buildNavItem(Icons.home, 'Home', 0),
+              _buildNavItem(Icons.home_outlined, 'Home', 0),
               _buildNavItem(Icons.search, 'Search', 1),
               const SizedBox(width: 40), // The space for the FAB
-              _buildNavItem(Icons.volunteer_activism, 'Donations', 2),
-              _buildNavItem(Icons.person, 'Profile', 4),
+              _buildNavItem(Icons.volunteer_activism_outlined, 'Impact', 2), // 🚀 UPDATE: New Impact Tab
+              _buildNavItem(Icons.person_outline, 'Profile', 4),
             ],
           ),
         ),
@@ -75,18 +75,17 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
   }
 
   Widget _buildNavItem(IconData icon, String label, int index) {
+    final isSelected = _selectedIndex == index;
     return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _onItemTapped(index),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: _selectedIndex == index ? Colors.green : Colors.grey),
-              Text(label, style: TextStyle(color: _selectedIndex == index ? Colors.green : Colors.grey, fontSize: 12)),
-            ],
-          ),
+      child: InkWell(
+        onTap: () => _onItemTapped(index),
+        borderRadius: BorderRadius.circular(30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: isSelected ? Colors.green : Colors.grey, size: 26),
+            Text(label, style: TextStyle(color: isSelected ? Colors.green : Colors.grey, fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+          ],
         ),
       ),
     );

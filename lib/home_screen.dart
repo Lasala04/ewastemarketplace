@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text("Marketplace", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text("EcoByte", style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           // 🚀 UPDATE: Notification icon is now functional.
           Stack(

@@ -1,3 +1,5 @@
+// listing_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
@@ -54,9 +56,10 @@ class ListingCard extends StatelessWidget {
                 children: [
                   Text(listing.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 4),
+                  // ✅ FIX: Removed the conditional check for 'donation'.
                   Text(
-                    listing.donation ? "Donation" : "₱${listing.price?.toStringAsFixed(2) ?? ''}",
-                    style: TextStyle(color: listing.donation ? Colors.green : Colors.white70),
+                    "₱${listing.price?.toStringAsFixed(2) ?? ''}",
+                    style: const TextStyle(color: Colors.white70),
                   ),
                   if (onMessage != null)
                     Align(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// 🚀 UPDATE: Imported staggered animations package.
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'sample_data.dart';
 import 'listing_card.dart';
@@ -59,7 +58,6 @@ class _SearchScreenState extends State<SearchScreen> {
             },
           ),
           Expanded(
-            // 🚀 UPDATE: Wrapped the ListView in animation widgets for consistency.
             child: AnimationLimiter(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 12),

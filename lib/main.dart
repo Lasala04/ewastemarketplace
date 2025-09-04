@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'startup_screen.dart'; // 🚀 UPDATE: App now starts at the startup screen.
+import 'startup_screen.dart';
 
 void main() {
   runApp(const EWasteApp());
@@ -13,7 +13,7 @@ class EWasteApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'E-Waste Marketplace',
+      title: 'EcoByte',
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.green,
         scaffoldBackgroundColor: Colors.black,
@@ -30,7 +30,7 @@ class EWasteApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const StartupScreen(), // 🚀 UPDATE: Initial route changed.
+      home: const StartupScreen(),
     );
   }
 }
