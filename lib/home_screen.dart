@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-// 🚀 UPDATE: Imported staggered animations package for a fluid list entrance.
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'sample_data.dart';
 import 'listing_card.dart';
 import 'category_filter.dart';
 import 'chat_screen.dart';
 import 'page_transition.dart';
+import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,22 +23,41 @@ class _HomeScreenState extends State<HomeScreen> {
         : sampleListings
         .where((l) => l.category == selectedCategory)
         .toList();
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text("Marketplace", style: TextStyle(fontWeight: FontWeight.bold)),
+        actions: [
+          // 🚀 UPDATE: Notification icon is now functional.
+          Stack(
             children: [
-              const Text("Marketplace",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_none_rounded),
+                onPressed: () {
+                  Navigator.of(context).push(FadeSlidePageRoute(page: const NotificationsScreen()));
+                },
+                icon: const Icon(Icons.notifications_none_rounded, size: 28),
               ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  height: 8,
+                  width: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.redAccent,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              )
             ],
           ),
-          const SizedBox(height: 12),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
           CategoryFilter(
             categories: const ["All", "Phones", "PCs", "Appliances"],
             selectedCategory: selectedCategory,
@@ -49,31 +68,21 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SizedBox(height: 12),
-          // 🚀 UPDATE: Wrapped the list in animation widgets for a staggered fade-in effect.
           AnimationLimiter(
             child: Column(
               children: AnimationConfiguration.toStaggeredList(
                 duration: const Duration(milliseconds: 375),
                 childAnimationBuilder: (widget) => SlideAnimation(
                   verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: widget,
-                  ),
+                  child: FadeInAnimation(child: widget),
                 ),
                 children: filteredListings
-                    .map(
-                      (listing) => ListingCard(
-                    listing: listing,
-                    onMessage: () {
-                      Navigator.push(
-                        context,
-                        FadeSlidePageRoute(
-                          page: ChatScreen(seller: listing.seller),
-                        ),
-                      );
-                    },
-                  ),
-                )
+                    .map((listing) => ListingCard(
+                  listing: listing,
+                  onMessage: () {
+                    Navigator.push(context, FadeSlidePageRoute(page: ChatScreen(seller: listing.seller)));
+                  },
+                ))
                     .toList(),
               ),
             ),

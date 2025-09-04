@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// 🚀 UPDATE: Imported packages for image caching and shimmer effect.
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'listing.dart';
@@ -29,10 +28,7 @@ class ListingCard extends StatelessWidget {
             Hero(
               tag: 'listing-image-${listing.id}',
               child: ClipRRect(
-                borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(16)),
-                // 🚀 UPDATE: Replaced Image.network with CachedNetworkImage for performance.
-                // Added a shimmer placeholder for a better loading experience.
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: CachedNetworkImage(
                   imageUrl: listing.imageUrl,
                   height: 150,
@@ -41,16 +37,12 @@ class ListingCard extends StatelessWidget {
                   placeholder: (context, url) => Shimmer.fromColors(
                     baseColor: Colors.grey[850]!,
                     highlightColor: Colors.grey[800]!,
-                    child: Container(
-                        height: 150, color: Colors.grey[850]),
+                    child: Container(height: 150, color: Colors.grey[850]),
                   ),
                   errorWidget: (context, url, error) => Container(
                     height: 150,
                     color: Colors.grey[800],
-                    child: const Center(
-                      child: Icon(Icons.image_not_supported_rounded,
-                          size: 40, color: Colors.grey),
-                    ),
+                    child: const Center(child: Icon(Icons.broken_image, size: 40, color: Colors.grey)),
                   ),
                 ),
               ),
@@ -60,27 +52,19 @@ class ListingCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(listing.title,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(listing.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 4),
                   Text(
-                    listing.donation
-                        ? "Donation"
-                        : "₱${listing.price?.toStringAsFixed(2) ?? ''}",
-                    style: TextStyle(
-                      color: listing.donation ? Colors.green : Colors.white70,
-                    ),
+                    listing.donation ? "Donation" : "₱${listing.price?.toStringAsFixed(2) ?? ''}",
+                    style: TextStyle(color: listing.donation ? Colors.green : Colors.white70),
                   ),
                   if (onMessage != null)
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton.icon(
                         onPressed: onMessage,
-                        icon: const Icon(Icons.chat_bubble_outline,
-                            color: Colors.green),
-                        label: const Text("Message",
-                            style: TextStyle(color: Colors.green)),
+                        icon: const Icon(Icons.chat_bubble_outline, color: Colors.green),
+                        label: const Text("Message", style: TextStyle(color: Colors.green)),
                       ),
                     ),
                 ],

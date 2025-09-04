@@ -10,7 +10,8 @@ class Listing {
   double rating;
   int ratingCount;
   String? transactionType; // 'F2F' or 'Online'
-  bool sold;
+  bool isSold; // 🚀 UPDATE: Changed from sold to isSold for consistency
+
   Listing({
     required this.id,
     required this.title,
@@ -23,6 +24,6 @@ class Listing {
     this.rating = 0.0,
     this.ratingCount = 0,
     this.transactionType,
-    this.sold = false,
+    this.isSold = false,
   });
 }

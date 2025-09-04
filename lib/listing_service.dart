@@ -1,3 +1,5 @@
+// listing_service.dart
+
 import 'package:flutter/foundation.dart';
 import 'listing.dart';
 
@@ -35,7 +37,7 @@ class ListingService extends ChangeNotifier {
   void reserve(String id, String type) {
     final l = _listings.firstWhere((x) => x.id == id);
     l.transactionType = type;
-    l.sold = true;
+    l.isSold = true; // ✅ FIX: Changed from sold to isSold
     notifyListeners();
   }
 
@@ -48,8 +50,8 @@ class ListingService extends ChangeNotifier {
       if (category != 'All' && l.category != category) return false;
       if (donationsOnly && !l.donation) return false;
       if (minStars > 0 && (l.rating.round() < minStars)) return false;
-      if (stock == 'available' && l.sold) return false;
-      if (stock == 'sold' && !l.sold) return false;
+      if (stock == 'available' && l.isSold) return false; // ✅ FIX: Changed from sold to isSold
+      if (stock == 'sold' && !l.isSold) return false;      // ✅ FIX: Changed from sold to isSold
       return true;
     }).toList();
   }
