@@ -1,11 +1,11 @@
-// messages_screen.dart
 import 'package:flutter/material.dart';
+// 🚀 UPDATE: Imported cached network image provider.
+import 'package:cached_network_image/cached_network_image.dart';
 import 'chat_screen.dart';
 import 'page_transition.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
-
   final List<Map<String, String>> dummyConversations = const [
     {
       "name": "John",
@@ -38,7 +38,8 @@ class MessagesScreen extends StatelessWidget {
             leading: Hero(
               tag: 'avatar-${convo["name"]}',
               child: CircleAvatar(
-                backgroundImage: NetworkImage(convo["avatar"]!),
+                // 🚀 UPDATE: Using cached image provider for avatars.
+                backgroundImage: CachedNetworkImageProvider(convo["avatar"]!),
                 radius: 26,
               ),
             ),

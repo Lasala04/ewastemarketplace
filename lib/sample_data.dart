@@ -1,9 +1,8 @@
-// sample_data.dart
 import 'listing.dart';
 
 List<Listing> sampleListings = [
   Listing(
-    id: "1", // ✅ added
+    id: "1",
     title: "Used Laptop",
     category: "PCs",
     imageUrl:
@@ -14,7 +13,7 @@ List<Listing> sampleListings = [
     price: 5000,
   ),
   Listing(
-    id: "2", // ✅ added
+    id: "2",
     title: "Old Smartphone",
     category: "Phones",
     imageUrl:
@@ -22,5 +21,17 @@ List<Listing> sampleListings = [
     description: "Good for backup use.",
     donation: true,
     seller: "Maria",
+  ),
+  Listing(
+    id: 'l3',
+    title: 'Microwave Oven',
+    category: 'Appliances',
+    imageUrl: 'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: 'Timer knob loose but works.',
+    donation: false,
+    seller: 'Alex',
+    price: 1200,
+    rating: 3.8,
+    ratingCount: 3,
   ),
 ];

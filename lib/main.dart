@@ -1,5 +1,5 @@
-// main.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; // 🚀 UPDATE: Imported Google Fonts for better typography.
 import 'home_screen.dart';
 import 'search_screen.dart';
 import 'donations_screen.dart';
@@ -12,23 +12,19 @@ void main() {
 
 class EWasteApp extends StatefulWidget {
   const EWasteApp({super.key});
-
   @override
   EWasteAppState createState() => EWasteAppState();
 }
 
 class EWasteAppState extends State<EWasteApp> {
   int _selectedIndex = 0;
-
-  // ✅ Removed const list, avoids the "const constructor" error
   final List<Widget> _screens = [
-    HomeScreen(),
-    SearchScreen(),
-    DonationsScreen(),
-    MessagesScreen(),
-    ProfileScreen(),
+    const HomeScreen(),
+    const SearchScreen(),
+    const DonationsScreen(),
+    const MessagesScreen(),
+    const ProfileScreen(),
   ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -41,10 +37,25 @@ class EWasteAppState extends State<EWasteApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.green,
-        scaffoldBackgroundColor: Colors.black,
+        scaffoldBackgroundColor: Colors.transparent, // 🚀 UPDATE: Made scaffold transparent for gradient.
+        // 🚀 UPDATE: Integrated Google Fonts for a modern, clean look similar to Spotify.
+        textTheme: GoogleFonts.montserratTextTheme(
+          ThemeData.dark().textTheme,
+        ),
       ),
       home: Scaffold(
-        body: _screens[_selectedIndex],
+        // 🚀 UPDATE: Added a container with a subtle gradient for a more premium background.
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.grey[900]!, Colors.black],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: const [0.0, 0.4],
+            ),
+          ),
+          child: _screens[_selectedIndex],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Colors.black,
           selectedItemColor: Colors.green,
@@ -55,7 +66,8 @@ class EWasteAppState extends State<EWasteApp> {
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            BottomNavigationBarItem(icon: Icon(Icons.volunteer_activism), label: 'Donations'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.volunteer_activism), label: 'Donations'),
             BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Messages'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           ],

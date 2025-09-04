@@ -1,7 +1,6 @@
-// chat_screen.dart
 import 'package:flutter/material.dart';
 import 'chat_service.dart';
-import 'chat.dart'; // adjust path to where your Message class is
+import 'chat.dart';
 import 'message_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -15,12 +14,21 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   late List<Message> _messages;
+  bool _isComposing = false; // 🚀 UPDATE: State to track if user is typing.
 
   @override
   void initState() {
     super.initState();
-    // load existing messages for this conversation
     _messages = ChatService.instance.messagesFor(widget.seller);
+    // 🚀 UPDATE: Listener to animate send button visibility.
+    _controller.addListener(() {
+      final isCurrentlyComposing = _controller.text.isNotEmpty;
+      if (isCurrentlyComposing != _isComposing) {
+        setState(() {
+          _isComposing = isCurrentlyComposing;
+        });
+      }
+    });
   }
 
   @override
@@ -32,12 +40,10 @@ class _ChatScreenState extends State<ChatScreen> {
   void _send() {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
-
     final msg =
     Message(sender: "Me", text: text, time: DateTime.now(), isMe: true);
 
     ChatService.instance.sendMessage(widget.seller, msg);
-
     setState(() {
       _messages = ChatService.instance.messagesFor(widget.seller);
     });
@@ -71,10 +77,12 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
+              reverse: true, // Show latest messages at the bottom
               padding: const EdgeInsets.all(12),
               itemCount: _messages.length,
               itemBuilder: (context, i) {
-                final msg = _messages[i];
+                final reversedIndex = _messages.length - 1 - i;
+                final msg = _messages[reversedIndex];
                 final isMe = msg.isMe == true || msg.sender == "Me";
                 return MessageBubble(
                     text: msg.text, time: msg.time, isMe: isMe);
@@ -95,9 +103,18 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Colors.green),
-                  onPressed: _send,
+                // 🚀 UPDATE: AnimatedSwitcher for a nice micro-interaction on the send button.
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, animation) =>
+                      ScaleTransition(scale: animation, child: child),
+                  child: _isComposing
+                      ? IconButton(
+                    key: const ValueKey('send_button'),
+                    icon: const Icon(Icons.send, color: Colors.green),
+                    onPressed: _send,
+                  )
+                      : const SizedBox.shrink(key: ValueKey('empty_box')),
                 ),
               ],
             ),

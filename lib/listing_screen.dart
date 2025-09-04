@@ -1,4 +1,3 @@
-// add_listing_screen.dart
 import 'package:flutter/material.dart';
 import 'listing.dart';
 import 'listing_service.dart';
@@ -6,7 +5,6 @@ import 'dart:math';
 
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({super.key});
-
   @override
   State<AddListingScreen> createState() => _AddListingScreenState();
 }
@@ -32,7 +30,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
     _form.currentState!.save();
 
     final id = _generateId();
-
     final l = Listing(
       id: id,
       title: title,
@@ -46,7 +43,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
       ratingCount: 0,
       sold: false,
     );
-
     ListingService.instance.add(l);
     Navigator.pop(context);
   }

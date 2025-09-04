@@ -1,5 +1,6 @@
-// home_screen.dart
 import 'package:flutter/material.dart';
+// 🚀 UPDATE: Imported staggered animations package for a fluid list entrance.
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'sample_data.dart';
 import 'listing_card.dart';
 import 'category_filter.dart';
@@ -15,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = "All";
-
   @override
   Widget build(BuildContext context) {
     final filteredListings = selectedCategory == "All"
@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
         : sampleListings
         .where((l) => l.category == selectedCategory)
         .toList();
-
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(12),
@@ -41,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           CategoryFilter(
-            categories: ["All", "Phones", "PCs", "Appliances"],
+            categories: const ["All", "Phones", "PCs", "Appliances"],
             selectedCategory: selectedCategory,
             onCategorySelected: (category) {
               setState(() {
@@ -50,17 +49,33 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SizedBox(height: 12),
-          ...filteredListings.map(
-                (listing) => ListingCard(
-              listing: listing,
-              onMessage: () {
-                Navigator.push(
-                  context,
-                  FadeSlidePageRoute(
-                    page: ChatScreen(seller: listing.seller),
+          // 🚀 UPDATE: Wrapped the list in animation widgets for a staggered fade-in effect.
+          AnimationLimiter(
+            child: Column(
+              children: AnimationConfiguration.toStaggeredList(
+                duration: const Duration(milliseconds: 375),
+                childAnimationBuilder: (widget) => SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: widget,
                   ),
-                );
-              },
+                ),
+                children: filteredListings
+                    .map(
+                      (listing) => ListingCard(
+                    listing: listing,
+                    onMessage: () {
+                      Navigator.push(
+                        context,
+                        FadeSlidePageRoute(
+                          page: ChatScreen(seller: listing.seller),
+                        ),
+                      );
+                    },
+                  ),
+                )
+                    .toList(),
+              ),
             ),
           ),
         ],

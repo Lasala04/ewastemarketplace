@@ -4,8 +4,11 @@ class MessageBubble extends StatelessWidget {
   final String text;
   final DateTime time;
   final bool isMe;
-
-  const MessageBubble({super.key, required this.text, required this.time, required this.isMe});
+  const MessageBubble(
+      {super.key,
+        required this.text,
+        required this.time,
+        required this.isMe});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,6 @@ class MessageBubble extends StatelessWidget {
       topRight: Radius.circular(16),
       bottomRight: Radius.circular(16),
     );
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
       child: Column(
@@ -32,14 +34,21 @@ class MessageBubble extends StatelessWidget {
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOutQuint,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-            decoration: BoxDecoration(color: bubbleColor, borderRadius: radius, boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 6, offset: const Offset(0,2))
-            ]),
+            decoration: BoxDecoration(
+                color: bubbleColor,
+                borderRadius: radius,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.4),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2))
+                ]),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 260),
               child: Text(
                 text,
-                style: TextStyle(color: isMe ? Colors.black : Colors.white, fontSize: 15),
+                style: TextStyle(
+                    color: isMe ? Colors.black : Colors.white, fontSize: 15),
               ),
             ),
           ),

@@ -1,5 +1,7 @@
-// listing_card.dart
 import 'package:flutter/material.dart';
+// 🚀 UPDATE: Imported packages for image caching and shimmer effect.
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'listing.dart';
 import 'listing_detail_screen.dart';
 import 'page_transition.dart';
@@ -29,16 +31,24 @@ class ListingCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius:
                 const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.network(
-                  listing.imageUrl,
+                // 🚀 UPDATE: Replaced Image.network with CachedNetworkImage for performance.
+                // Added a shimmer placeholder for a better loading experience.
+                child: CachedNetworkImage(
+                  imageUrl: listing.imageUrl,
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey[850]!,
+                    highlightColor: Colors.grey[800]!,
+                    child: Container(
+                        height: 150, color: Colors.grey[850]),
+                  ),
+                  errorWidget: (context, url, error) => Container(
                     height: 150,
                     color: Colors.grey[800],
                     child: const Center(
-                      child: Icon(Icons.image,
+                      child: Icon(Icons.image_not_supported_rounded,
                           size: 40, color: Colors.grey),
                     ),
                   ),

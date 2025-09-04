@@ -4,5 +4,9 @@ class Message {
   final DateTime time;
   final bool isMe;
 
-  Message({required this.sender, required this.text, required this.time, this.isMe = false});
+  Message(
+      {required this.sender,
+        required this.text,
+        required this.time,
+        this.isMe = false});
 }

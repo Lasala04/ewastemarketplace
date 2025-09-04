@@ -1,5 +1,6 @@
-// search_screen.dart
 import 'package:flutter/material.dart';
+// 🚀 UPDATE: Imported staggered animations package.
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'sample_data.dart';
 import 'listing_card.dart';
 import 'category_filter.dart';
@@ -16,17 +17,15 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   String selectedCategory = "All";
   String query = "";
-
   @override
   Widget build(BuildContext context) {
     final filteredListings = sampleListings.where((listing) {
       final matchesCategory =
           selectedCategory == "All" || listing.category == selectedCategory;
-      final matchesQuery =
-          query.isEmpty || listing.title.toLowerCase().contains(query.toLowerCase());
+      final matchesQuery = query.isEmpty ||
+          listing.title.toLowerCase().contains(query.toLowerCase());
       return matchesCategory && matchesQuery;
     }).toList();
-
     return SafeArea(
       child: Column(
         children: [
@@ -51,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           CategoryFilter(
-            categories: ["All", "Phones", "PCs", "Appliances"],
+            categories: const ["All", "Phones", "PCs", "Appliances"],
             selectedCategory: selectedCategory,
             onCategorySelected: (category) {
               setState(() {
@@ -60,22 +59,35 @@ class _SearchScreenState extends State<SearchScreen> {
             },
           ),
           Expanded(
-            child: ListView(
-              children: filteredListings
-                  .map(
-                    (listing) => ListingCard(
-                  listing: listing,
-                  onMessage: () {
-                    Navigator.push(
-                      context,
-                      FadeSlidePageRoute(
-                        page: ChatScreen(seller: listing.seller),
-                      ),
-                    );
-                  },
+            // 🚀 UPDATE: Wrapped the ListView in animation widgets for consistency.
+            child: AnimationLimiter(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 375),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: widget,
+                    ),
+                  ),
+                  children: filteredListings
+                      .map(
+                        (listing) => ListingCard(
+                      listing: listing,
+                      onMessage: () {
+                        Navigator.push(
+                          context,
+                          FadeSlidePageRoute(
+                            page: ChatScreen(seller: listing.seller),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                      .toList(),
                 ),
-              )
-                  .toList(),
+              ),
             ),
           ),
         ],

@@ -11,8 +11,6 @@ class Listing {
   int ratingCount;
   String? transactionType; // 'F2F' or 'Online'
   bool sold;
-
-
   Listing({
     required this.id,
     required this.title,
