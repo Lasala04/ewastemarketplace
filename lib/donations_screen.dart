@@ -1,46 +1,51 @@
 import 'package:flutter/material.dart';
-import 'sample_data.dart';
+import 'listing_service.dart';
 import 'listing_card.dart';
 
-class DonationsScreen extends StatelessWidget {
+class DonationsScreen extends StatefulWidget {
   const DonationsScreen({super.key});
 
   @override
+  _DonationsScreenState createState() => _DonationsScreenState();
+}
+
+class _DonationsScreenState extends State<DonationsScreen> {
+  final ListingService _service = ListingService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    // Rebuild when the service notifies (listings added/removed/updated)
+    _service.addListener(_onServiceChanged);
+  }
+
+  @override
+  void dispose() {
+    _service.removeListener(_onServiceChanged);
+    super.dispose();
+  }
+
+  void _onServiceChanged() => setState(() {});
+
+  @override
   Widget build(BuildContext context) {
-    // Use the `donation` field that exists on Listing
-    final donationListings = sampleListings.where((l) => l.donation).toList();
+    final donations = _service.filter(donationsOnly: true);
 
-    return SafeArea(
-      child: ListView(
+    return Scaffold(
+      appBar: AppBar(title: const Text("Donations")),
+      body: ListView(
         padding: const EdgeInsets.all(12),
-        children: [
-          const Text(
-            "Donations",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-
-          if (donationListings.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: Text(
-                  "No donation items available right now.",
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
-                ),
-              ),
-            )
-          else
-            ...donationListings
-                .map(
-                  (listing) => ListingCard(
-                listing: listing,
-                onMessage: () {
-                  // Navigate to chat screen
-                },
-              ),
-            )
-        ],
+        children: donations.isEmpty
+            ? [
+          const SizedBox(height: 50),
+          const Center(
+            child: Text(
+              "No donation items available right now.",
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+          )
+        ]
+            : donations.map((listing) => ListingCard(listing: listing)).toList(),
       ),
     );
   }

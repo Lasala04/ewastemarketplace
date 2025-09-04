@@ -1,67 +1,94 @@
 // home_screen.dart
 import 'package:flutter/material.dart';
-import 'sample_data.dart';
+import 'listing_service.dart';
 import 'listing_card.dart';
 import 'category_filter.dart';
-import 'chat_screen.dart';
+import 'listing_screen.dart'; // ✅ correct path
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedCategory = "All";
+  String stock = "available";
+  final ListingService _service = ListingService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _service.addListener(_onServiceChanged);
+  }
+
+  @override
+  void dispose() {
+    _service.removeListener(_onServiceChanged);
+    super.dispose();
+  }
+
+  void _onServiceChanged() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
-    final filteredListings = selectedCategory == "All"
-        ? sampleListings
-        : sampleListings.where((l) => l.category == selectedCategory).toList();
+    final filtered = _service.filter(category: selectedCategory, stock: stock);
 
-    return SafeArea(
-      child: ListView(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Marketplace",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_none_rounded),
+          )
+        ],
+      ),
+      body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Marketplace",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_none_rounded),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
           CategoryFilter(
             categories: ["All", "Phones", "PCs", "Appliances"],
             selectedCategory: selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                selectedCategory = category;
-              });
-            },
+            onCategorySelected: (c) => setState(() => selectedCategory = c),
           ),
-
           const SizedBox(height: 12),
-          ...filteredListings.map((listing) => ListingCard(
-            listing: listing,
-            onMessage: () {
-              // Navigate to chat screen
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ChatScreen(seller: listing.seller),
-                ),
-              );
-            },
-          )),
+          Row(children: [
+            ChoiceChip(
+              label: const Text("Available"),
+              selected: stock == "available",
+              onSelected: (_) => setState(() => stock = "available"),
+            ),
+            const SizedBox(width: 8),
+            ChoiceChip(
+              label: const Text("Sold"),
+              selected: stock == "sold",
+              onSelected: (_) => setState(() => stock = "sold"),
+            ),
+          ]),
+          const SizedBox(height: 12),
+          ...filtered
+              .map((listing) => AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            child: ListingCard(
+              key: ValueKey(listing.id),
+              listing: listing,
+            ),
+          ))
+              .toList(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.add),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddListingScreen()), // ✅ class found
+        ),
       ),
     );
   }

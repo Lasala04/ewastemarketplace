@@ -1,13 +1,20 @@
 class Listing {
-  final String title;
-  final String category;
-  final String imageUrl;
-  final String description;
-  final bool donation; // existing field
-  final String seller;
-  final double? price;
+  String id;
+  String title;
+  String category;
+  String imageUrl;
+  String description;
+  bool donation;
+  String seller;
+  double? price;
+  double rating;
+  int ratingCount;
+  String? transactionType; // 'F2F' or 'Online'
+  bool sold;
+
 
   Listing({
+    required this.id,
     required this.title,
     required this.category,
     required this.imageUrl,
@@ -15,7 +22,9 @@ class Listing {
     required this.donation,
     required this.seller,
     this.price,
+    this.rating = 0.0,
+    this.ratingCount = 0,
+    this.transactionType,
+    this.sold = false,
   });
-
-  bool get isDonation => donation;
 }
