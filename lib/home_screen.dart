@@ -1,91 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'sample_data.dart';
-import 'listing_card.dart';
-import 'category_filter.dart';
-import 'chat_screen.dart';
-import 'page_transition.dart';
+import 'sample_sellers.dart';
+import 'horizontal_listing_carousel.dart';
+import 'horizontal_seller_carousel.dart';
 import 'notifications_screen.dart';
+import 'search_screen.dart';
+import 'page_transition.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  String selectedCategory = "All";
-  @override
   Widget build(BuildContext context) {
-    final filteredListings = selectedCategory == "All"
-        ? sampleListings
-        : sampleListings
-        .where((l) => l.category == selectedCategory)
-        .toList();
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text("EcoByte", style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          // 🚀 UPDATE: Notification icon is now functional.
-          Stack(
-            children: [
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            title: const Text("EcoByte", style: TextStyle(fontWeight: FontWeight.bold)),
+            actions: [
+              // ✅ FIX: Search bar is back and functional
               IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(FadeSlidePageRoute(page: const NotificationsScreen()));
-                },
-                icon: const Icon(Icons.notifications_none_rounded, size: 28),
+                onPressed: () => Navigator.of(context).push(FadeSlidePageRoute(page: const SearchScreen())),
+                icon: const Icon(Icons.search),
               ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  height: 8,
-                  width: 8,
-                  decoration: const BoxDecoration(
-                    color: Colors.redAccent,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              )
+              IconButton(
+                onPressed: () => Navigator.of(context).push(FadeSlidePageRoute(page: const NotificationsScreen())),
+                icon: const Icon(Icons.notifications_none_rounded),
+              ),
             ],
           ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          CategoryFilter(
-            categories: const ["All", "Phones", "PCs", "Appliances"],
-            selectedCategory: selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                selectedCategory = category;
-              });
-            },
-          ),
-          const SizedBox(height: 12),
-          AnimationLimiter(
-            child: Column(
-              children: AnimationConfiguration.toStaggeredList(
-                duration: const Duration(milliseconds: 375),
-                childAnimationBuilder: (widget) => SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(child: widget),
-                ),
-                children: filteredListings
-                    .map((listing) => ListingCard(
-                  listing: listing,
-                  onMessage: () {
-                    Navigator.push(context, FadeSlidePageRoute(page: ChatScreen(seller: listing.seller)));
-                  },
-                ))
-                    .toList(),
-              ),
-            ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              const SizedBox(height: 10),
+              HorizontalListingCarousel(title: "Top Selling", listings: topSellingItems),
+              HorizontalSellerCarousel(title: "Top Sellers", sellers: sampleSellers), // 🚀 UPDATE
+              HorizontalListingCarousel(title: "Top Rated", listings: topRatedItems),
+              HorizontalListingCarousel(title: "Recently Added", listings: recentItems),
+            ]),
           ),
         ],
       ),

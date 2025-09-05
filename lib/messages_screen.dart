@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// 🚀 UPDATE: Imported cached network image provider.
 import 'package:cached_network_image/cached_network_image.dart';
 import 'chat_screen.dart';
 import 'page_transition.dart';
@@ -7,21 +6,9 @@ import 'page_transition.dart';
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({super.key});
   final List<Map<String, String>> dummyConversations = const [
-    {
-      "name": "John",
-      "avatar": "https://i.pravatar.cc/150?img=11",
-      "last": "Still available?",
-    },
-    {
-      "name": "Maria",
-      "avatar": "https://i.pravatar.cc/150?img=22",
-      "last": "Can I donate this?",
-    },
-    {
-      "name": "Alex",
-      "avatar": "https://i.pravatar.cc/150?img=33",
-      "last": "When can we meet?",
-    },
+    {"name": "GadgetGuru", "avatar": "https://i.pravatar.cc/150?img=11", "last": "Sounds good, see you then!"},
+    {"name": "TechReviver", "avatar": "https://i.pravatar.cc/150?img=22", "last": "Is the item still available?"},
+    {"name": "CircuitSurplus", "avatar": "https://i.pravatar.cc/150?img=33", "last": "Thanks for the great deal!"},
   ];
 
   @override
@@ -33,27 +20,15 @@ class MessagesScreen extends StatelessWidget {
         itemBuilder: (context, i) {
           final convo = dummyConversations[i];
           return ListTile(
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            leading: Hero(
-              tag: 'avatar-${convo["name"]}',
-              child: CircleAvatar(
-                // 🚀 UPDATE: Using cached image provider for avatars.
-                backgroundImage: CachedNetworkImageProvider(convo["avatar"]!),
-                radius: 26,
-              ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(convo["avatar"]!),
+              radius: 28,
             ),
-            title: Text(convo["name"]!,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(convo["last"]!,
-                style: const TextStyle(color: Colors.white70)),
+            title: Text(convo["name"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(convo["last"]!, style: const TextStyle(color: Colors.white70)),
             onTap: () {
-              Navigator.push(
-                context,
-                FadeSlidePageRoute(
-                  page: ChatScreen(seller: convo["name"]!),
-                ),
-              );
+              Navigator.push(context, FadeSlidePageRoute(page: ChatScreen(seller: convo["name"]!)));
             },
           );
         },

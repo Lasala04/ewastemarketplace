@@ -1,4 +1,4 @@
-// listing_card.dart
+// FILE: listing_card.dart (Corrected)
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,68 +9,45 @@ import 'page_transition.dart';
 
 class ListingCard extends StatelessWidget {
   final Listing listing;
-  final VoidCallback? onMessage;
-  const ListingCard({super.key, required this.listing, this.onMessage});
+  const ListingCard({super.key, required this.listing});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          FadeSlidePageRoute(page: ListingDetailScreen(listing: listing)),
-        );
-      },
+      onTap: () => Navigator.push(context, FadeSlidePageRoute(page: ListingDetailScreen(listing: listing))),
       child: Card(
-        color: Colors.grey[900],
+        clipBehavior: Clip.antiAlias,
+        // ✅ FIX: Corrected the typo from 'RoundedRectangle-border' to 'RoundedRectangleBorder'
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Hero(
-              tag: 'listing-image-${listing.id}',
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: CachedNetworkImage(
-                  imageUrl: listing.imageUrl,
-                  height: 150,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey[850]!,
-                    highlightColor: Colors.grey[800]!,
-                    child: Container(height: 150, color: Colors.grey[850]),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    height: 150,
-                    color: Colors.grey[800],
-                    child: const Center(child: Icon(Icons.broken_image, size: 40, color: Colors.grey)),
-                  ),
+            Expanded(
+              flex: 3,
+              child: CachedNetworkImage(
+                imageUrl: listing.imageUrl,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Shimmer.fromColors(
+                  baseColor: Colors.grey[850]!,
+                  highlightColor: Colors.grey[800]!,
+                  child: Container(color: Colors.grey[850]),
                 ),
+                errorWidget: (context, url, error) => const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(listing.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 4),
-                  // ✅ FIX: Removed the conditional check for 'donation'.
-                  Text(
-                    "₱${listing.price?.toStringAsFixed(2) ?? ''}",
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  if (onMessage != null)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: onMessage,
-                        icon: const Icon(Icons.chat_bubble_outline, color: Colors.green),
-                        label: const Text("Message", style: TextStyle(color: Colors.green)),
-                      ),
-                    ),
-                ],
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(listing.title, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text("\u20B1${listing.price?.toStringAsFixed(0) ?? ''}", style: TextStyle(color: Colors.grey[300])),
+                  ],
+                ),
               ),
             ),
           ],

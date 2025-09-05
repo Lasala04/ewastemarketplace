@@ -1,4 +1,4 @@
-// dashboard_stat_card.dart
+// FILE: dashboard_stat_card.dart (Corrected)
 
 import 'package:flutter/material.dart';
 
@@ -16,6 +16,11 @@ class DashboardStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // This logic checks if the value contains the '₱' sign and replaces it.
+    final displayValue = value.contains('₱')
+        ? value.replaceAll('₱', '\u20B1')
+        : value;
+
     return Card(
       color: Colors.grey[900],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -29,7 +34,8 @@ class DashboardStatCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                // ✅ FIX: The logic above ensures the Unicode character is used here.
+                Text(displayValue, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(title, style: TextStyle(fontSize: 14, color: Colors.grey[400])),
               ],

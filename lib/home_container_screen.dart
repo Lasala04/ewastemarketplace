@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
-import 'search_screen.dart';
-import 'impact_screen.dart'; // 🚀 UPDATE: Replaced donations screen
-import 'messages_screen.dart';
+import 'impact_screen.dart';
+import 'messages_screen.dart'; // 🚀 UPDATE: Messages screen is back
 import 'profile_screen.dart';
 import 'add_listing_screen.dart';
 import 'page_transition.dart';
@@ -17,11 +16,11 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [
     const HomeScreen(),
-    const SearchScreen(),
-    const ImpactScreen(), // 🚀 UPDATE: New Impact Screen
-    const MessagesScreen(),
+    const MessagesScreen(), // 🚀 UPDATE: Replaced Sellers with Messages
+    const ImpactScreen(),
     const ProfileScreen(),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -31,24 +30,12 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.grey[900]!, Colors.black],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: const [0.0, 0.4],
-          ),
-        ),
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: _screens,
-        ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(FadeSlidePageRoute(page: const AddListingScreen()));
-        },
+        onPressed: () => Navigator.of(context).push(FadeSlidePageRoute(page: const AddListingScreen())),
         backgroundColor: Colors.green,
         child: const Icon(Icons.add, color: Colors.black),
       ),
@@ -56,17 +43,17 @@ class HomeContainerScreenState extends State<HomeContainerScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
-        color: Colors.black,
+        color: Colors.black.withOpacity(0.8),
         child: SizedBox(
           height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               _buildNavItem(Icons.home_outlined, 'Home', 0),
-              _buildNavItem(Icons.search, 'Search', 1),
-              const SizedBox(width: 40), // The space for the FAB
-              _buildNavItem(Icons.volunteer_activism_outlined, 'Impact', 2), // 🚀 UPDATE: New Impact Tab
-              _buildNavItem(Icons.person_outline, 'Profile', 4),
+              _buildNavItem(Icons.chat_bubble_outline, 'Messages', 1), // 🚀 UPDATE
+              const SizedBox(width: 40),
+              _buildNavItem(Icons.volunteer_activism_outlined, 'Impact', 2),
+              _buildNavItem(Icons.person_outline, 'Profile', 3), // Index adjusted
             ],
           ),
         ),

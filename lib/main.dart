@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'startup_screen.dart';
+import 'animated_gradient_background.dart';
 
 void main() {
-  runApp(const EWasteApp());
+  runApp(const EcoByteApp());
 }
 
-class EWasteApp extends StatelessWidget {
-  const EWasteApp({super.key});
+class EcoByteApp extends StatelessWidget {
+  const EcoByteApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +16,28 @@ class EWasteApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'EcoByte',
       theme: ThemeData.dark().copyWith(
-        primaryColor: Colors.green,
-        scaffoldBackgroundColor: Colors.black,
-        textTheme: GoogleFonts.montserratTextTheme(
+        primaryColor: Colors.green, // 🚀 UPDATE: Color scheme reverted
+        scaffoldBackgroundColor: Colors.transparent,
+        textTheme: GoogleFonts.poppinsTextTheme(
           ThemeData.dark().textTheme,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.green, // 🚀 UPDATE: Color scheme reverted
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
           ),
         ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
       ),
+      builder: (context, child) {
+        return AnimatedGradientBackground(child: child!);
+      },
       home: const StartupScreen(),
     );
   }

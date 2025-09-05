@@ -1,58 +1,32 @@
+// FILE: listing_detail_screen.dart (Corrected)
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'listing.dart';
 import 'rate_transaction_sheet.dart';
 
-class ListingDetailScreen extends StatefulWidget {
+class ListingDetailScreen extends StatelessWidget {
   final Listing listing;
   const ListingDetailScreen({super.key, required this.listing});
 
-  @override
-  State<ListingDetailScreen> createState() => _ListingDetailScreenState();
-}
-
-class _ListingDetailScreenState extends State<ListingDetailScreen> {
-  late bool _isSold;
-
-  @override
-  void initState() {
-    super.initState();
-    _isSold = widget.listing.isSold;
-  }
-
-  void _markAsSold() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Confirm Transaction'),
-        content: const Text('Are you sure you want to mark this item as sold?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _isSold = true;
-              });
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showRatingSheet() {
+  void _showRatingSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => const RateTransactionSheet(),
+      isScrollControlled: true,
+      backgroundColor: Colors.grey[900],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: const RateTransactionSheet(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -60,29 +34,12 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Hero(
-                tag: 'listing-image-${widget.listing.id}',
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: widget.listing.imageUrl,
-                      fit: BoxFit.cover,
-                    ),
-                    if (_isSold)
-                      Container(
-                        color: Colors.black.withOpacity(0.5),
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text('SOLD', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ),
-                  ],
+                tag: 'listing-image-${listing.id}',
+                child: CachedNetworkImage(
+                  imageUrl: listing.imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(color: Colors.grey[800]),
+                  errorWidget: (context, url, error) => const Center(child: Icon(Icons.broken_image)),
                 ),
               ),
             ),
@@ -91,28 +48,66 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
             padding: const EdgeInsets.all(16.0),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                Text(widget.listing.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Text(
+                  listing.title,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
-                Text(widget.listing.description, style: const TextStyle(color: Colors.white70, height: 1.5)),
+                Text(
+                  "Sold by ${listing.seller}",
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  listing.description,
+                  style: const TextStyle(color: Colors.white70, height: 1.5),
+                ),
                 const SizedBox(height: 20),
-                Text("₱${widget.listing.price?.toStringAsFixed(2)}", style: const TextStyle(fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 30),
-                if (!_isSold)
-                  ElevatedButton.icon(
-                    onPressed: _markAsSold,
-                    icon: const Icon(Icons.check_circle_outline),
-                    label: const Text('Mark as Sold'),
-                  )
-                else
-                  OutlinedButton.icon(
-                    onPressed: _showRatingSheet,
-                    icon: const Icon(Icons.star_outline),
-                    label: const Text('Rate Seller'),
+                // ✅ FIX: Replaced '₱' with its Unicode escape sequence '\u20B1'
+                Text(
+                  "\u20B1${listing.price?.toStringAsFixed(2)}",
+                  style: const TextStyle(
+                    fontSize: 22,
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
               ]),
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton.icon(
+              icon: const Icon(Icons.chat_bubble_outline),
+              label: const Text("Message Seller"),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Opening chat with ${listing.seller}...'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              child: const Text(
+                "Rate Item (after purchase)",
+                style: TextStyle(color: Colors.grey),
+              ),
+              onPressed: () => _showRatingSheet(context),
+            ),
+          ],
+        ),
       ),
     );
   }
