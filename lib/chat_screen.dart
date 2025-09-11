@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'chat_service.dart';
-import 'chat.dart';
-import 'message_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String seller;
-  const ChatScreen({super.key, required this.seller});
+  final String sellerName;
+  const ChatScreen({super.key, required this.sellerName});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -13,108 +10,59 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  late List<Message> _messages;
-  bool _isComposing = false; // 🚀 UPDATE: State to track if user is typing.
+  final List<String> _messages = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _messages = ChatService.instance.messagesFor(widget.seller);
-    // 🚀 UPDATE: Listener to animate send button visibility.
-    _controller.addListener(() {
-      final isCurrentlyComposing = _controller.text.isNotEmpty;
-      if (isCurrentlyComposing != _isComposing) {
-        setState(() {
-          _isComposing = isCurrentlyComposing;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _send() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
-    final msg =
-    Message(sender: "Me", text: text, time: DateTime.now(), isMe: true);
-
-    ChatService.instance.sendMessage(widget.seller, msg);
-    setState(() {
-      _messages = ChatService.instance.messagesFor(widget.seller);
-    });
-
-    _controller.clear();
+  void _sendMessage() {
+    if (_controller.text.isNotEmpty) {
+      setState(() {
+        _messages.add(_controller.text);
+      });
+      _controller.clear();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            Hero(
-              tag: 'avatar-${widget.seller}',
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  "https://i.pravatar.cc/150?u=${widget.seller}",
-                ),
-                radius: 18,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(widget.seller,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: Text(widget.sellerName)),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              reverse: true, // Show latest messages at the bottom
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8.0),
               itemCount: _messages.length,
-              itemBuilder: (context, i) {
-                final reversedIndex = _messages.length - 1 - i;
-                final msg = _messages[reversedIndex];
-                final isMe = msg.isMe == true || msg.sender == "Me";
-                return MessageBubble(
-                    text: msg.text, time: msg.time, isMe: isMe);
+              itemBuilder: (context, index) {
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(_messages[index], style: const TextStyle(color: Colors.black)),
+                  ),
+                );
               },
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            color: Colors.grey[900],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: "Type a message...",
-                      border: InputBorder.none,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                     ),
                   ),
                 ),
-                // 🚀 UPDATE: AnimatedSwitcher for a nice micro-interaction on the send button.
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  transitionBuilder: (child, animation) =>
-                      ScaleTransition(scale: animation, child: child),
-                  child: _isComposing
-                      ? IconButton(
-                    key: const ValueKey('send_button'),
-                    icon: const Icon(Icons.send, color: Colors.green),
-                    onPressed: _send,
-                  )
-                      : const SizedBox.shrink(key: ValueKey('empty_box')),
+                IconButton(
+                  icon: const Icon(Icons.send, color: Colors.green),
+                  onPressed: _sendMessage,
                 ),
               ],
             ),

@@ -23,13 +23,13 @@ class ImpactTrackerCard extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
                 const SizedBox(height: 4),
-                // This tween animation builder makes the number count up
                 TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: 0, end: 47.5),
+                  tween: Tween<double>(begin: 0, end: 21.5), // Adjusted mock value
                   duration: const Duration(milliseconds: 1500),
                   builder: (context, value, child) {
                     return Text(
-                      "${value.toStringAsFixed(1)} lbs",
+                      // ✅ FIX: Changed LBS to KGS
+                      "${value.toStringAsFixed(1)} KGS",
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,

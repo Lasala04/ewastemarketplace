@@ -1,8 +1,6 @@
-// user_listings_view.dart
-
 import 'package:flutter/material.dart';
-import 'listing.dart'; // ✅ FIX: Added the missing import for the Listing class
-import 'sample_data.dart';
+import 'listing_service.dart'; // ✅ FIX: Import service
+import 'listing.dart';
 import 'listing_card.dart';
 
 class UserListingsView extends StatefulWidget {
@@ -14,23 +12,33 @@ class UserListingsView extends StatefulWidget {
 
 class _UserListingsViewState extends State<UserListingsView> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final ListingService _listingService = ListingService.instance;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // ✅ FIX: Listen for changes to update the UI
+    _listingService.addListener(_onListingsChanged);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _listingService.removeListener(_onListingsChanged);
     super.dispose();
+  }
+
+  void _onListingsChanged() {
+    setState(() {}); // Re-render the widget when listings change
   }
 
   @override
   Widget build(BuildContext context) {
-    final activeListings = sampleListings.where((l) => !l.isSold).toList();
-    final pastListings = sampleListings.where((l) => l.isSold).toList();
+    // ✅ FIX: Get listings directly from the service
+    final allUserListings = _listingService.allListings.where((l) => l.seller == 'John Doe').toList();
+    final activeListings = allUserListings.where((l) => !l.isSold).toList();
+    final pastListings = allUserListings.where((l) => l.isSold).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +55,7 @@ class _UserListingsViewState extends State<UserListingsView> with SingleTickerPr
         ),
         const SizedBox(height: 16),
         SizedBox(
-          height: 260, // Set a fixed height for the TabBarView
+          height: 260,
           child: TabBarView(
             controller: _tabController,
             children: [

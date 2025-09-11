@@ -1,3 +1,5 @@
+// FILE: messages_screen.dart (Corrected)
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'chat_screen.dart';
@@ -28,7 +30,8 @@ class MessagesScreen extends StatelessWidget {
             title: Text(convo["name"]!, style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(convo["last"]!, style: const TextStyle(color: Colors.white70)),
             onTap: () {
-              Navigator.push(context, FadeSlidePageRoute(page: ChatScreen(seller: convo["name"]!)));
+              // ✅ FIX: Changed parameter from 'seller' to 'sellerName'
+              Navigator.push(context, FadeSlidePageRoute(page: ChatScreen(sellerName: convo["name"]!)));
             },
           );
         },

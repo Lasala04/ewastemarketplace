@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'startup_screen.dart';
 import 'animated_gradient_background.dart';
+import 'listing_service.dart'; // Import the service
+import 'sample_data.dart'; // Import sample data
 
 void main() {
+  // Initialize the ListingService with sample data
+  ListingService.instance.seed(sampleListings);
   runApp(const EcoByteApp());
 }
 
@@ -16,14 +20,14 @@ class EcoByteApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'EcoByte',
       theme: ThemeData.dark().copyWith(
-        primaryColor: Colors.green, // 🚀 UPDATE: Color scheme reverted
+        primaryColor: Colors.green,
         scaffoldBackgroundColor: Colors.transparent,
         textTheme: GoogleFonts.poppinsTextTheme(
           ThemeData.dark().textTheme,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green, // 🚀 UPDATE: Color scheme reverted
+            backgroundColor: Colors.green,
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),

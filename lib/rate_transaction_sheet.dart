@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'rating_stars.dart';
 
-class RateTransactionSheet extends StatelessWidget {
+class RateTransactionSheet extends StatefulWidget {
   const RateTransactionSheet({super.key});
+
+  @override
+  State<RateTransactionSheet> createState() => _RateTransactionSheetState();
+}
+
+class _RateTransactionSheetState extends State<RateTransactionSheet> {
+  // ✅ FIX: Made stateful for interactive rating
+  double _currentRating = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +22,13 @@ class RateTransactionSheet extends StatelessWidget {
         children: [
           const Text('Rate this Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
-          const Center(child: RatingStars(rating: 0, size: 40)), // This could be made stateful
+          Center(
+            child: RatingStars(
+              rating: _currentRating,
+              size: 40,
+              onRate: (rating) => setState(() => _currentRating = rating),
+            ),
+          ),
           const SizedBox(height: 20),
           const TextField(
             decoration: InputDecoration(
@@ -25,8 +39,13 @@ class RateTransactionSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
             child: const Text('Submit Rating'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Thank you for your feedback!'), backgroundColor: Colors.green),
+              );
+            },
           ),
         ],
       ),

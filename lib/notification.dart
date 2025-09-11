@@ -14,19 +14,31 @@ class NotificationItem {
   });
 }
 
-// Dummy data for notifications
+// ✅ FIX: Updated with more diverse notifications
 final List<NotificationItem> sampleNotifications = [
   NotificationItem(
-    title: 'New Message from "Alice"',
-    subtitle: 'Regarding your iPhone X listing: "Is this still available?"',
+    title: 'New Message from "GadgetGuru"',
+    subtitle: 'Regarding your listing: "Is this still available?"',
     timeAgo: '5m ago',
     icon: Icons.chat_bubble_outline,
   ),
   NotificationItem(
-    title: 'Your Listing is Popular!',
-    subtitle: '"Used Laptop" has received 100 views this week.',
+    title: 'New Listing Alert!',
+    subtitle: '"Vintage Speakers" was just listed in Appliances.',
+    timeAgo: '30m ago',
+    icon: Icons.new_releases_outlined,
+  ),
+  NotificationItem(
+    title: 'Impact Update',
+    subtitle: 'Together, we have now prevented over 21 KGS of e-waste!',
     timeAgo: '1h ago',
-    icon: Icons.visibility_outlined,
+    icon: Icons.landscape_outlined,
+  ),
+  NotificationItem(
+    title: 'Recommendation For You',
+    subtitle: 'You might be interested in "Samsung S10".',
+    timeAgo: '3h ago',
+    icon: Icons.recommend_outlined,
   ),
   NotificationItem(
     title: 'Transaction Completed',
